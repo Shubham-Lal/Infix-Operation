@@ -25,6 +25,28 @@ var prioArray = [
     },
 ]
 
+// For one selection at a time
+function onlyOne(checkbox) {
+    var checkboxes = document.getElementsByName('check');
+    checkboxes.forEach((item) => {
+        if (item !== checkbox) {
+            item.checked = false
+        }
+
+    })
+    // To get value of selected checkbox
+    var checkedValue = null;
+    var inputElements = document.getElementsByClassName('operation');
+    for (var i = 0; inputElements[i]; ++i) {
+        if (inputElements[i].checked) {
+            checkedValue = inputElements[i].value;
+            break;
+        }
+    };
+    console.log(checkedValue);
+    return checkedValue;
+}
+
 var infix = "";
 var numberButton = document.querySelectorAll(".conv-btn").length;
 for (var i = 0; i < numberButton; i++) {
@@ -43,9 +65,8 @@ for (var i = 0; i < numberButton; i++) {
             var prefix = toPrefix(infix);
             var evalpost = eval_post(postfix);
             var evalpref = eval_pref(prefix);
-            // var evalprefix = toPrefix(infix);
-            document.querySelector(".postfix-eval-text").innerHTML = evalpost;
-            document.querySelector(".prefix-eval-text").innerHTML = evalpref;
+            // document.querySelector(".postfix-eval-text").innerHTML = evalpost;
+            // document.querySelector(".prefix-eval-text").innerHTML = evalpref;
         }
     });
 }
