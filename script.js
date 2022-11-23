@@ -25,35 +25,13 @@ var prioArray = [
     },
 ]
 
-// For one selection at a time
-function onlyOne(checkbox) {
-    var checkboxes = document.getElementsByName('check');
-    checkboxes.forEach((item) => {
-        if (item !== checkbox) {
-            item.checked = false
-        }
-
-    })
-    // To get value of selected checkbox
-    var checkedValue = null;
-    var inputElements = document.getElementsByClassName('operation');
-    for (var i = 0; inputElements[i]; ++i) {
-        if (inputElements[i].checked) {
-            checkedValue = inputElements[i].value;
-            break;
-        }
-    };
-    console.log(checkedValue);
-    return checkedValue;
-}
-
 var infix = "";
 var numberButton = document.querySelectorAll(".conv-btn").length;
 for (var i = 0; i < numberButton; i++) {
     document.querySelectorAll(".conv-btn")[i].addEventListener("click", function () {
         infix = document.getElementById("infixExp").value;
+        console.log(typeof(infix));
         var askedConv = this.innerHTML;
-        // if (askedConv == "Convert" || askedConv == "Evaluate") {
         if (askedConv == "Convert") {
             var postfix = toPostfix(infix);
             var prefix = toPrefix(infix);
@@ -61,12 +39,10 @@ for (var i = 0; i < numberButton; i++) {
             document.querySelector(".prefix-answer-text").innerHTML = prefix;
         }
         if (askedConv == "Evaluate") {
-            var postfix = toPostfix(infix);
-            var prefix = toPrefix(infix);
-            var evalpost = eval_post(postfix);
-            var evalpref = eval_pref(prefix);
-            // document.querySelector(".postfix-eval-text").innerHTML = evalpost;
-            // document.querySelector(".prefix-eval-text").innerHTML = evalpref;
+            let infixArr = infix.split(' ');
+            console.log(infixArr);
+            let evalPost  = whichCheckbox(infixArr);
+            document.querySelector(".postfix-eval-text").innerHTML = evalPost;
         }
     });
 }
@@ -137,14 +113,12 @@ function doCalculation(postfix, n, st, infix) {
 
 // Reverse the given expression with conditions
 function strrev(strng) {
-    var tmp = "";
-    console.log("given str: " + strng);
+    var tmp = [];
     for (var i = strng.length - 1; i >= 0; i--) {
         if (strng[i] == "(") strng[i] = ")";
         else if (strng[i] == ")") strng[i] = "(";
-        tmp += strng[i];
+        tmp.push(strng[i]);
     }
-    console.log("reversed: " + tmp);
     return tmp;
 }
 
@@ -173,27 +147,40 @@ function toPrefix(infix) {
 
 
 // Function for Postfix Evaluation of Infix Expression
-function eval_post(post) {
+
+function evaluateExpression(Expression, str){
     // Input Infix Expression --> (9-((3*4)+8)/4) (8*8/3+4-(5/3^9))
 
     // Creating an Empty Array for the Postfix Evaluation
     var evalArr = [];
 
-    // For Iterating through entire passed Postfix Expression(post)
-    for (var i = 0; i < post.length; i++) {
-        // Scanned Elements from the passed Postfix Expression(post)
-        var scan = post[i];
+
+    // 88*4/9+-
+    // For Iterating through entire passed Postfix Expression(Expression)
+    for (var i = 0; i < Expression.length; ) {
+        // Scanned Elements from the passed Postfix Expression(Expression)
+        var scan = Expression[i];
 
         // If the Scanned Element(scan) is a operand, directly push it into stack(evalArr)
-        if (!isNaN(parseInt(scan))) {
-            evalArr.push(scan.charCodeAt(0) - '0'.charCodeAt(0));
+        if(i==0 && !isNaN(scan)){
+            evalArr.push(Number(scan));
+            evalArr.push(Number(Expression[++i]));
+            i++;
+        }
+        else if(i !=0 && !isNaN(scan)){
+            evalArr.push(Number(scan));
+            i++;
         }
         // If the Scanned Element(scan) is an mathematical operator then perform the operand calculation with the two Popped value
         else {
             // Iniatialization & Declaration of popped operands
             let val1 = evalArr.pop();
             let val2 = evalArr.pop();
-
+            if(str === 'prefix'){
+                let tmp = val1;
+                val1 = val2;
+                val2 = tmp;
+            }
             switch (scan) {
                 case '+':
                     evalArr.push(val2 + val1);
@@ -215,67 +202,74 @@ function eval_post(post) {
                     evalArr.push(Math.pow(val2, val1));
                     break;
             }
+            i++;
         }
+        console.log(`scanned: ${Expression[i]} stack: ${evalArr}`);
     }
-
+    console.log(evalArr);
     //Converting Array to String for displaying the result through innerHTML
-    var evalStr = evalArr.toString();
-    console.log("Postfix Evaluation Result: " + evalStr);
-    return evalArr.pop();
+    if(evalArr.length >1) return false;
+    else {
+        var evalStr = evalArr.toString();
+        console.log("Postfix Evaluation Result: " + evalStr);
+        return evalStr;
+    }
+    
+
 }
 
 
-// Function for Prefix Evaluation of Infix Expression
-function eval_pref(pref) {
-    // Input Infix Expression --> (5*(4+3)^2)
+// For switching between postfix evaluation and prefix evaluation
+function whichCheckbox(infix){
+    let postfix = document.querySelector('.postfix-box').checked;
+    let prefix = document.querySelector('.prefix-box').checked;
+    if(prefix && postfix){
+        alert("Please check only one box.")
 
-    // Creating an Empty Array for the Prefix Evaluation
-    evalArr = [];
-
-    // For Iterating through entire passed Prefix Expression(pref)
-    for (var i = pref.length - 1; i >= 0; i--) {
-
-        // Scanned Elements from the passed Prefix Expression(pref)
-        var scan = pref[i]; 
-
-        // If the Scanned Element(scan) is a operand, directly push it into stack(evalArr)
-        if (!isNaN(parseInt(scan))) {
-            evalArr.push(scan.charCodeAt(0) - '0'.charCodeAt(0));
+    }else if(postfix){
+        var calVal = evaluateExpression(infix, 'postfix');
+        if(!calVal){
+            alert('Sorry, Expression invalid.');
+        } else {
+            return calVal;
         }
-
-        // If the Scanned Element(scan) is an mathematical operator then perform the operand calculation with the two Popped value
-        else {
-            // Iniatialization & Declaration of popped operands
-            let val1 = evalArr.pop();
-            let val2 = evalArr.pop();
-
-            switch (scan) {
-                case '+':
-                    evalArr.push(val2 + val1);
-                    break;
-
-                case '-':
-                    evalArr.push(val2 - val1);
-                    break;
-
-                case '/':
-                    evalArr.push(val2 / val1);
-                    break;
-
-                case '*':
-                    evalArr.push(val2 * val1);
-                    break;
-
-                case '^':
-                    evalArr.push(Math.pow(val2, val1));
-                    break;
-            }
-        }
-
     }
-
-    //Converting Array to String for displaying the result through innerHTML
-    var evalStr = evalArr.toString();
-    console.log("Prefix Evaluation Result: " + evalStr);
-    return evalArr.pop();
+    else if(prefix){
+        infix = strrev(infix);
+        calVal = evaluateExpression(infix, 'prefix');
+        if(!calVal){
+            alert('Sorry, Expression invalid.');
+        } else {
+            return calVal;
+        }
+    }
+    else {
+        alert("Please, check at most one box.");
+    }
 }
+
+
+
+infix = 8+(-2)*(-3)/(-4)
+// function onlyOne(checkbox) {
+//     console.log(checkbox);
+//     var checkboxes = document.getElementsByName('check');
+//     checkboxes.forEach((item) => {
+//         if (item !== checkbox) {
+//             item.checked = false
+//         }
+
+//     })
+//     // To get value of selected checkbox
+//     var checkedValue = null;
+//     var inputElements = document.getElementsByClassName('operation');
+//     for (var i = 0; inputElements[i]; ++i) {
+//         if (inputElements[i].checked) {
+//             checkedValue = inputElements[i].value;
+//             break;
+//         }
+//     };
+//     console.log(checkedValue);
+//     return checkedValue;
+// }
+    

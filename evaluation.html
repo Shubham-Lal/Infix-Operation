@@ -82,7 +82,7 @@
         </div>
         <div class="helper-text">
             <h3>
-                Choose an expression from checkboxes and click Evaluate
+                Enter the infix expression in the box and click Evaluate
             </h3>
             <p>
                 Type the expression without Space and with Open & Close Brackets
@@ -95,13 +95,10 @@
                 </p>
             </div>
         </div>
-        <div class="operation">
-            <label>
-                <input class="operation" type="checkbox" value="convert" name="check" onclick="onlyOne(this)" />Postfix
-            </label>
-            <label>
-                <input class="operation" type="checkbox" value="evaluate" name="check" onclick="onlyOne(this)" />Prefix
-            </label>
+
+        <div class="operation checkbox-selector">
+            <input type="checkbox"  name="check" value="postfix" class="postfix-box">Postfix
+            <input type="checkbox"  name="check" value="prefix" class="prefix-box">Prefix
         </div>
         <div class="input-field">
             <input id="infixExp" class="expression-field" type="text" placeholder="Expression" aria-label="text">
@@ -109,15 +106,16 @@
         </div>
         <div class="action-buttons">
             <button type="button" id="action-btn" class="btn btn-warning conv-btn">Evaluate</button>
+            <!-- <button type="button" id="action-btn" class="btn btn-warning conv-btn" disabled>Evaluate</button> -->
         </div>
         <div class="results-evaluation">
-            <span class="postfix-eval">Evaluation Evaluation:
-                <span class="expression-eval-text"></span>
+            <span class="postfix-eval">Evaluation:
+            <span class="postfix-eval-text"></span>
             </span>
         </div>
 
         <div class="contributor">
-            <p class="contributor-name">By Jay</p>
+            <p class="contributor-name">By Jay & Shubham</p>
         </div>
 
 
