@@ -10,4 +10,5 @@
 
 (❁´◡`❁) ᴍᴏʀᴇ ᴏɴ ᴛʜᴇ ᴡᴀʏ
 
-## Hosted on [Github Pages](CERTIFIED2003.github.io/infix_operation/) & [Cloudflare](infix-operation.pages.dev)
+## Deployment
+Hosted on [Github Pages](CERTIFIED2003.github.io/infix_operation/) & [Cloudflare](infix-operation.pages.dev)
